@@ -1,64 +1,74 @@
-```python
-from flask import Flask, render_template, request
-import re
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
 
-app = Flask(__name__)
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            text-align: center;
+            padding-top: 80px;
+        }
 
+        .container {
+            background: white;
+            width: 400px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #aaa;
+        }
 
-def check_password(password):
-    score = 0
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 15px 0;
+            font-size: 16px;
+        }
 
-    length = len(password) >= 8
-    uppercase = bool(re.search(r"[A-Z]", password))
-    lowercase = bool(re.search(r"[a-z]", password))
-    number = bool(re.search(r"[0-9]", password))
-    special = bool(re.search(r"[^A-Za-z0-9]", password))
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-    if length:
-        score += 1
-    if uppercase:
-        score += 1
-    if lowercase:
-        score += 1
-    if number:
-        score += 1
-    if special:
-        score += 1
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
 
-    if score <= 2:
-        strength = "Weak"
-    elif score <= 4:
-        strength = "Medium"
-    else:
-        strength = "Strong"
+<body>
 
-    return strength, length, uppercase, lowercase, number, special
+<div class="container">
+    <h1>Password Strength Checker</h1>
 
+    <form method="POST">
+        <input type="password" name="password"
+               placeholder="Enter your password" required>
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = None
+        <br>
 
-    if request.method == "POST":
-        password = request.form.get("password", "")
-        result = check_password(password)
+        <button type="submit">Check Strength</button>
+    </form>
 
-    return render_template("index.html", result=result)
+    {% if result %}
+        <div class="result">
+            <p><strong>Strength: {{ result[0] }}</strong></p>
 
+            <p>8+ characters: {{ "Yes" if result[1] else "No" }}</p>
+            <p>Uppercase letter: {{ "Yes" if result[2] else "No" }}</p>
+            <p>Lowercase letter: {{ "Yes" if result[3] else "No" }}</p>
+            <p>Number: {{ "Yes" if result[4] else "No" }}</p>
+            <p>Special character: {{ "Yes" if result[5] else "No" }}</p>
+        </div>
+    {% endif %}
 
-if __name__ == "__main__":
-    app.run(debug=True)
-```
+</div>
 
-### Your folder should look like this:
-
-```text
-TECHOLAS/
-│
-├── app.py
-│
-└── templates/
-    └── index.html
-```
-
-If you're continuing from where we stopped, **paste this into `app.py`**, save it, and tell me **Done**. Then I'll give you the next step.
+</body>
+</html>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import re
+import os
 
 app = Flask(__name__)
 
@@ -11,7 +12,7 @@ def check_password(password):
     uppercase = bool(re.search(r"[A-Z]", password))
     lowercase = bool(re.search(r"[a-z]", password))
     number = bool(re.search(r"[0-9]", password))
-    special = bool(re.search(r"[@#$%!]", password))
+    special = bool(re.search(r"[^A-Za-z0-9]", password))
 
     if length:
         score += 1
@@ -31,32 +32,20 @@ def check_password(password):
     else:
         strength = "Strong"
 
-    checks = {
-        "length": length,
-        "uppercase": uppercase,
-        "lowercase": lowercase,
-        "number": number,
-        "special": special
-    }
-
-    return strength, checks
+    return strength, length, uppercase, lowercase, number, special
 
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def home():
     result = None
-    checks = None
 
     if request.method == "POST":
         password = request.form.get("password", "")
-        result, checks = check_password(password)
+        result = check_password(password)
 
-    return render_template(
-        "index.html",
-        result=result,
-        checks=checks
-    )
+    return render_template("index.html", result=result)
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
