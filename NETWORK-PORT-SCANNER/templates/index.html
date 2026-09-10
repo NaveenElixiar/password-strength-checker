@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Network Port Scanner</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #000;
+            color: #00bfff;
+            font-family: "Courier New", monospace;
+            overflow-x: hidden;
+        }
+
+        /* Running 0 and 1 background */
+        .binary {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.15;
+        }
+
+        .binary span {
+            position: absolute;
+            top: -100px;
+            color: #008cff;
+            font-size: 18px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(-100px);
+            }
+            to {
+                transform: translateY(110vh);
+            }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 60px auto;
+            padding: 35px;
+            border: 2px solid #008cff;
+            box-shadow: 0 0 25px #006eff;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #008cff;
+            padding-bottom: 25px;
+        }
+
+        .icon {
+            font-size: 55px;
+        }
+
+        h1 {
+            margin: 10px 0;
+            font-size: 32px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #008cff;
+        }
+
+        .subtitle {
+            color: #6ecfff;
+            font-size: 14px;
+        }
+
+        .status {
+            margin-top: 15px;
+            color: #00ffcc;
+            font-size: 13px;
+        }
+
+        .form-section {
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #6ecfff;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: #050505;
+            border: 1px solid #008cff;
+            color: #fff;
+            font-family: "Courier New", monospace;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            box-shadow: 0 0 15px #008cff;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: #001a33;
+            border: 2px solid #008cff;
+            color: #00bfff;
+            font-family: "Courier New", monospace;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #008cff;
+            color: #000;
+            box-shadow: 0 0 20px #008cff;
+        }
+
+        .result {
+            margin-top: 35px;
+            padding: 25px;
+            border: 1px solid #008cff;
+        }
+
+        .result h2 {
+            color: #fff;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .risk {
+            text-align: center;
+            font-size: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 12px #008cff;
+        }
+
+        .score {
+            text-align: center;
+            color: #6ecfff;
+            margin-bottom: 25px;
+        }
+
+        .checks {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checks li {
+            padding: 10px;
+            margin: 7px 0;
+            border-left: 3px solid #008cff;
+            background: #050505;
+        }
+
+        .safe {
+            color: #00ff88;
+        }
+
+        .warning {
+            color: #ffcc00;
+        }
+
+        .danger {
+            color: #ff4444;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #008cff;
+            text-align: center;
+            color: #468fba;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+                margin: 25px auto;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated binary background -->
+    <div class="binary" id="binary"></div>
+
+    <div class="container">
+
+        <div class="header">
+            <div class="icon">🛡️</div>
+
+            <h1>NETWORK PORT SCANNER</h1>
+
+            <div class="subtitle">
+                // NETWORK SECURITY ANALYSIS SYSTEM
+            </div>
+
+            <div class="status">
+                SYSTEM: ONLINE | SCANNER: ACTIVE
+            </div>
+        </div>
+
+        <div class="form-section">
+
+            <form method="POST">
+
+                <label for="target">
+                    &gt; ENTER TARGET IP ADDRESS / HOSTNAME
+                </label>
+
+                <input
+                    type="text"
+                    id="target"
+                    name="target"
+                    placeholder="Example: 127.0.0.1"
+                    required
+                >
+
+                <button type="submit">
+                    [ SCAN PORTS ]
+                </button>
+
+            </form>
+
+        </div>
+
+        {% if result %}
+
+        <div class="result">
+
+            <h2>[ SCAN RESULTS ]</h2>
+
+            <div class="risk">
+                {{ result.message }}
+            </div>
+
+            <div class="score">
+                TARGET: {{ result.target }}
+            </div>
+
+            <ul class="checks">
+
+                {% for port in result.open_ports %}
+
+                    <li class="danger">
+                        ⚠ PORT {{ port }} — OPEN
+                    </li>
+
+                {% endfor %}
+
+                {% if not result.open_ports %}
+
+                    <li class="safe">
+                        ✓ NO OPEN PORTS FOUND
+                    </li>
+
+                {% endif %}
+
+            </ul>
+
+        </div>
+
+        {% endif %}
+
+        <div class="footer">
+            &gt; NETWORK PORT SCANNER // FLASK SECURITY SYSTEM
+        </div>
+
+    </div>
+
+    <script>
+        const binary = document.getElementById("binary");
+
+        for (let i = 0; i < 80; i++) {
+
+            const span = document.createElement("span");
+
+            span.innerText = Math.random() > 0.5 ? "1" : "0";
+
+            span.style.left = Math.random() * 100 + "%";
+
+            span.style.animationDuration =
+                (3 + Math.random() * 7) + "s";
+
+            span.style.animationDelay =
+                Math.random() * 5 + "s";
+
+            binary.appendChild(span);
+        }
+    </script>
+
+</body>
+</html>
