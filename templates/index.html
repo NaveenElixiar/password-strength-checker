@@ -1,200 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NEW DESIGN TEST</title>
+<title>Password Strength Checker</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: white;
-        }
+body {
+    min-height: 100vh;
+    font-family: "Courier New", monospace;
+    background: #000;
+    color: #e5e5e5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    overflow-x: hidden;
+}
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.10);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 35px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-        }
+/* BINARY BACKGROUND */
+.binary-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+    opacity: 0.22;
+}
 
-        .icon {
-            width: 75px;
-            height: 75px;
-            margin: 0 auto 20px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 38px;
-        }
+.binary {
+    position: absolute;
+    top: -100px;
+    color: #aaa;
+    font-size: 18px;
+    line-height: 1.6;
+    white-space: pre;
+    animation: fall linear infinite;
+}
 
-        h1 {
-            text-align: center;
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
+@keyframes fall {
+    from {
+        transform: translateY(-100px);
+    }
+    to {
+        transform: translateY(110vh);
+    }
+}
 
-        .subtitle {
-            text-align: center;
-            color: #cbd5e1;
-            margin-bottom: 30px;
-            font-size: 15px;
-        }
+/* MAIN BOX */
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: rgba(10, 10, 10, 0.94);
+    border: 1px solid #777;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow:
+        0 0 25px rgba(255,255,255,0.08),
+        inset 0 0 30px rgba(255,255,255,0.03);
+}
 
-        .input-box {
-            position: relative;
-        }
+/* TOP STATUS */
+.status {
+    text-align: center;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #999;
+    margin-bottom: 20px;
+}
 
-        input {
-            width: 100%;
-            padding: 16px 50px 16px 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.25);
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
+.status span {
+    color: #ddd;
+}
 
-        input::placeholder {
-            color: #94a3b8;
-        }
+/* LOCK */
+.icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border: 1px solid #777;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    background: #080808;
+    box-shadow: 0 0 20px rgba(255,255,255,0.08);
+}
 
-        input:focus {
-            border-color: #60a5fa;
-        }
+/* TITLE */
+h1 {
+    text-align: center;
+    font-size: 30px;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+}
 
-        .show-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #cbd5e1;
-            cursor: pointer;
-            font-size: 20px;
-        }
+.subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 30px;
+}
 
-        .check-btn {
-            width: 100%;
-            margin-top: 18px;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(90deg, #3b82f6, #6366f1);
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* TERMINAL LABEL */
+.label {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
 
-        .check-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-        }
+/* INPUT */
+.input-box {
+    position: relative;
+}
 
-        .result {
-            margin-top: 28px;
-            padding: 22px;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 15px;
-        }
+input {
+    width: 100%;
+    padding: 17px 55px 17px 18px;
+    background: #050505;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    outline: none;
+}
 
-        .strength {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+input::placeholder {
+    color: #666;
+}
 
-        .weak {
-            color: #f87171;
-        }
+input:focus {
+    border-color: #ccc;
+    box-shadow: 0 0 12px rgba(255,255,255,0.08);
+}
 
-        .medium {
-            color: #facc15;
-        }
+/* SHOW PASSWORD */
+.show-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 19px;
+    cursor: pointer;
+}
 
-        .strong {
-            color: #4ade80;
-        }
+.show-btn:hover {
+    color: white;
+}
 
-        .requirement {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            color: #e2e8f0;
-        }
+/* BUTTON */
+.check-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 16px;
+    background: #111;
+    border: 1px solid #777;
+    color: #eee;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.25s;
+}
 
-        .requirement:last-child {
-            border-bottom: none;
-        }
+.check-btn:hover {
+    background: #222;
+    border-color: #fff;
+    box-shadow: 0 0 18px rgba(255,255,255,0.12);
+}
 
-        .yes {
-            color: #4ade80;
-            font-weight: bold;
-        }
+/* RESULT */
+.result {
+    margin-top: 30px;
+    padding: 22px;
+    background: #050505;
+    border: 1px solid #444;
+    border-radius: 4px;
+}
 
-        .no {
-            color: #f87171;
-            font-weight: bold;
-        }
+.result-title {
+    color: #777;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
 
-        .footer {
-            text-align: center;
-            margin-top: 25px;
-            color: #94a3b8;
-            font-size: 13px;
-        }
+.strength {
+    text-align: center;
+    font-size: 23px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
 
-        @media (max-width: 500px) {
-            .container {
-                padding: 25px;
-            }
+.weak {
+    color: #aaa;
+}
 
-            h1 {
-                font-size: 25px;
-            }
-        }
-    </style>
+.medium {
+    color: #ccc;
+}
+
+.strong {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+/* STRENGTH BAR */
+.strength-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 22px;
+}
+
+.bar {
+    height: 7px;
+    flex: 1;
+    background: #222;
+    border: 1px solid #444;
+}
+
+.bar.active {
+    background: #ddd;
+    border-color: #fff;
+}
+
+/* REQUIREMENTS */
+.requirement {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 5px;
+    border-bottom: 1px solid #222;
+    color: #bbb;
+    font-size: 14px;
+}
+
+.requirement:last-child {
+    border-bottom: none;
+}
+
+.yes {
+    color: #eee;
+    font-weight: bold;
+}
+
+.no {
+    color: #666;
+    font-weight: bold;
+}
+
+/* FOOTER */
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #555;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+    .container {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+}
+</style>
 </head>
 
 <body>
 
+<!-- RUNNING BINARY BACKGROUND -->
+<div class="binary-bg" id="binaryBg"></div>
+
 <div class="container">
+
+    <div class="status">
+        SYSTEM: <span>ONLINE</span>
+        &nbsp; | &nbsp;
+        SECURITY: <span>ACTIVE</span>
+    </div>
 
     <div class="icon">🔐</div>
 
-    <h1>NEW DESIGN TEST</h1>
+    <h1>PASSWORD STRENGTH</h1>
 
     <p class="subtitle">
-        Check how strong and secure your password is
+        // SECURE PASSWORD ANALYSIS SYSTEM
     </p>
 
     <form method="POST">
+
+        <div class="label">
+            &gt; ENTER PASSWORD
+        </div>
 
         <div class="input-box">
 
@@ -202,7 +316,7 @@
                 type="password"
                 id="password"
                 name="password"
-                placeholder="Enter your password"
+                placeholder="Enter your password..."
                 required
             >
 
@@ -218,84 +332,96 @@
         </div>
 
         <button type="submit" class="check-btn">
-            🔍 Check Password
+            [ CHECK PASSWORD ]
         </button>
 
     </form>
-
 
     {% if result %}
 
     <div class="result">
 
+        <div class="result-title">
+            &gt; SCAN RESULT
+        </div>
+
         {% if result[0] == "Weak" %}
+
             <div class="strength weak">
-                🔴 Weak Password
+                [ WEAK PASSWORD ]
             </div>
 
         {% elif result[0] == "Medium" %}
+
             <div class="strength medium">
-                🟡 Medium Password
+                [ MEDIUM PASSWORD ]
             </div>
 
         {% else %}
+
             <div class="strength strong">
-                🟢 Strong Password
+                [ STRONG PASSWORD ]
             </div>
+
         {% endif %}
 
+        <div class="strength-bar">
+
+            <div class="bar {% if result[1] %}active{% endif %}"></div>
+            <div class="bar {% if result[2] %}active{% endif %}"></div>
+            <div class="bar {% if result[3] %}active{% endif %}"></div>
+            <div class="bar {% if result[4] %}active{% endif %}"></div>
+            <div class="bar {% if result[5] %}active{% endif %}"></div>
+
+        </div>
 
         <div class="requirement">
-            <span>8+ characters</span>
+            <span>&gt; 8+ characters</span>
 
             {% if result[1] %}
-                <span class="yes">✓ Yes</span>
+                <span class="yes">[✓]</span>
             {% else %}
-                <span class="no">✗ No</span>
+                <span class="no">[✗]</span>
             {% endif %}
         </div>
 
-
         <div class="requirement">
-            <span>Uppercase letter</span>
+            <span>&gt; Uppercase letter</span>
 
             {% if result[2] %}
-                <span class="yes">✓ Yes</span>
+                <span class="yes">[✓]</span>
             {% else %}
-                <span class="no">✗ No</span>
+                <span class="no">[✗]</span>
             {% endif %}
         </div>
 
-
         <div class="requirement">
-            <span>Lowercase letter</span>
+            <span>&gt; Lowercase letter</span>
 
             {% if result[3] %}
-                <span class="yes">✓ Yes</span>
+                <span class="yes">[✓]</span>
             {% else %}
-                <span class="no">✗ No</span>
+                <span class="no">[✗]</span>
             {% endif %}
         </div>
 
-
         <div class="requirement">
-            <span>Number</span>
+            <span>&gt; Number</span>
 
             {% if result[4] %}
-                <span class="yes">✓ Yes</span>
+                <span class="yes">[✓]</span>
             {% else %}
-                <span class="no">✗ No</span>
+                <span class="no">[✗]</span>
             {% endif %}
         </div>
 
-
         <div class="requirement">
-            <span>Special character</span>
+            <span>&gt; Special character</span>
 
             {% if result[5] %}
-                <span class="yes">✓ Yes</span>
+                <span class="yes">[✓]</span>
             {% else %}
-                <span class="no">✗ No</span>
+                <span class="no">[✗]</span>
             {% endif %}
         </div>
 
@@ -303,28 +429,60 @@
 
     {% endif %}
 
-
     <div class="footer">
-        🛡️ Password Security Tool
+        &gt; PASSWORD SECURITY TOOL // FLASK SYSTEM
     </div>
 
 </div>
 
-
 <script>
-    function togglePassword() {
 
-        const password = document.getElementById("password");
-        const button = document.getElementById("showButton");
+/* PASSWORD VISIBILITY */
+function togglePassword() {
 
-        if (password.type === "password") {
-            password.type = "text";
-            button.textContent = "🙈";
-        } else {
-            password.type = "password";
-            button.textContent = "👁";
-        }
+    const password = document.getElementById("password");
+    const button = document.getElementById("showButton");
+
+    if (password.type === "password") {
+        password.type = "text";
+        button.textContent = "🙈";
+    } else {
+        password.type = "password";
+        button.textContent = "👁";
     }
+}
+
+
+/* RUNNING 0s AND 1s */
+const binaryBg = document.getElementById("binaryBg");
+
+for (let i = 0; i < 35; i++) {
+
+    const column = document.createElement("div");
+
+    column.className = "binary";
+
+    column.style.left = Math.random() * 100 + "%";
+
+    column.style.animationDuration =
+        (5 + Math.random() * 10) + "s";
+
+    column.style.animationDelay =
+        -(Math.random() * 10) + "s";
+
+    let text = "";
+
+    for (let j = 0; j < 35; j++) {
+
+        text += Math.random() > 0.5 ? "1\n" : "0\n";
+
+    }
+
+    column.textContent = text;
+
+    binaryBg.appendChild(column);
+}
+
 </script>
 
 </body>
