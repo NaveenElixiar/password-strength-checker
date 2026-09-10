@@ -3,41 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Strength Checker</title>
+
+    <title>NEW DESIGN TEST</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
+            min-height: 100vh;
             font-family: Arial, sans-serif;
-            background: #f2f2f2;
-            text-align: center;
-            padding-top: 80px;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: white;
         }
 
         .container {
-            background: white;
-            width: 400px;
-            margin: auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px #aaa;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 30px;
+            font-size: 15px;
+        }
+
+        .input-box {
+            position: relative;
         }
 
         input {
-            width: 90%;
-            padding: 12px;
-            margin: 15px 0;
+            width: 100%;
+            padding: 16px 50px 16px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            color: white;
             font-size: 16px;
+            outline: none;
         }
 
-        button {
-            padding: 12px 25px;
-            font-size: 16px;
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input:focus {
+            border-color: #60a5fa;
+        }
+
+        .show-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #cbd5e1;
             cursor: pointer;
+            font-size: 20px;
+        }
+
+        .check-btn {
+            width: 100%;
+            margin-top: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #3b82f6, #6366f1);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
         }
 
         .result {
-            margin-top: 20px;
-            font-size: 20px;
+            margin-top: 28px;
+            padding: 22px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 15px;
+        }
+
+        .strength {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .weak {
+            color: #f87171;
+        }
+
+        .medium {
+            color: #facc15;
+        }
+
+        .strong {
+            color: #4ade80;
+        }
+
+        .requirement {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+
+        .requirement:last-child {
+            border-bottom: none;
+        }
+
+        .yes {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .no {
+            color: #f87171;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
         }
     </style>
 </head>
@@ -45,30 +185,147 @@
 <body>
 
 <div class="container">
-    <h1>Password Strength Checker</h1>
+
+    <div class="icon">🔐</div>
+
+    <h1>NEW DESIGN TEST</h1>
+
+    <p class="subtitle">
+        Check how strong and secure your password is
+    </p>
 
     <form method="POST">
-        <input type="password" name="password"
-               placeholder="Enter your password" required>
 
-        <br>
+        <div class="input-box">
 
-        <button type="submit">Check Strength</button>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button
+                type="button"
+                class="show-btn"
+                onclick="togglePassword()"
+                id="showButton"
+            >
+                👁
+            </button>
+
+        </div>
+
+        <button type="submit" class="check-btn">
+            🔍 Check Password
+        </button>
+
     </form>
 
-    {% if result %}
-        <div class="result">
-            <p><strong>Strength: {{ result[0] }}</strong></p>
 
-            <p>8+ characters: {{ "Yes" if result[1] else "No" }}</p>
-            <p>Uppercase letter: {{ "Yes" if result[2] else "No" }}</p>
-            <p>Lowercase letter: {{ "Yes" if result[3] else "No" }}</p>
-            <p>Number: {{ "Yes" if result[4] else "No" }}</p>
-            <p>Special character: {{ "Yes" if result[5] else "No" }}</p>
+    {% if result %}
+
+    <div class="result">
+
+        {% if result[0] == "Weak" %}
+            <div class="strength weak">
+                🔴 Weak Password
+            </div>
+
+        {% elif result[0] == "Medium" %}
+            <div class="strength medium">
+                🟡 Medium Password
+            </div>
+
+        {% else %}
+            <div class="strength strong">
+                🟢 Strong Password
+            </div>
+        {% endif %}
+
+
+        <div class="requirement">
+            <span>8+ characters</span>
+
+            {% if result[1] %}
+                <span class="yes">✓ Yes</span>
+            {% else %}
+                <span class="no">✗ No</span>
+            {% endif %}
         </div>
+
+
+        <div class="requirement">
+            <span>Uppercase letter</span>
+
+            {% if result[2] %}
+                <span class="yes">✓ Yes</span>
+            {% else %}
+                <span class="no">✗ No</span>
+            {% endif %}
+        </div>
+
+
+        <div class="requirement">
+            <span>Lowercase letter</span>
+
+            {% if result[3] %}
+                <span class="yes">✓ Yes</span>
+            {% else %}
+                <span class="no">✗ No</span>
+            {% endif %}
+        </div>
+
+
+        <div class="requirement">
+            <span>Number</span>
+
+            {% if result[4] %}
+                <span class="yes">✓ Yes</span>
+            {% else %}
+                <span class="no">✗ No</span>
+            {% endif %}
+        </div>
+
+
+        <div class="requirement">
+            <span>Special character</span>
+
+            {% if result[5] %}
+                <span class="yes">✓ Yes</span>
+            {% else %}
+                <span class="no">✗ No</span>
+            {% endif %}
+        </div>
+
+    </div>
+
     {% endif %}
 
+
+    <div class="footer">
+        🛡️ Password Security Tool
+    </div>
+
 </div>
+
+
+<script>
+    function togglePassword() {
+
+        const password = document.getElementById("password");
+        const button = document.getElementById("showButton");
+
+        if (password.type === "password") {
+            password.type = "text";
+            button.textContent = "🙈";
+        } else {
+            password.type = "password";
+            button.textContent = "👁";
+        }
+    }
+</script>
 
 </body>
 </html>
